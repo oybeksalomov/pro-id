@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: 'gt-walsheim-pro';
+    src: url("@/assets/fonts/GT/GTWalsheimPro-Regular.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: 'gt-walsheim-pro-medium';
+    src: url("@/assets/fonts/GT/GTWalsheimPro-Medium.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: 'gt-walsheim-pro-bold';
+    src: url("@/assets/fonts/GT/GTWalsheimPro-Bold.woff2") format("woff2");
+}
+
+:root {
+    --base-color: #5FE0D8;
+    --bg-black: #303030;
+    --base-white: #ffffff;
+    --border-gray: #ACACAC;
+}
+
+body {
+    @apply bg-base-bg text-black;
+    font-family: 'gt-walsheim-pro', sans-serif;
+}
+.base-container {
+    @apply px-10 max-md:px-4
+}
+.main-card {
+    @apply bg-white rounded-[20px] p-5 shadow h-fit
+}
+.auth-card {
+    @apply bg-white rounded-[20px] p-10 shadow h-fit
+}
+.data-container {
+    @apply rounded-[10px] w-full bg-base-bg p-5
+}

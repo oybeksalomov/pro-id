@@ -1,7 +1,5 @@
 <template>
-    <div>
-
-    </div>
+<component :is="$route.meta.layout"/>
 </template>
 
 <script setup>
