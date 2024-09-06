@@ -19,6 +19,22 @@ const router = createRouter({
             meta: {
                 layout: defineAsyncComponent(() => import('@/layouts/AuthLayout.vue'))
             }
+        },
+        {
+            path: '/send-code',
+            name: 'send-code',
+            component: () => import('@/pages/SmsCodePage.vue'),
+            meta: {
+                layout: defineAsyncComponent(() => import('@/layouts/AuthLayout.vue'))
+            }
+        },
+        {
+            path: '/sign-up',
+            name: 'sign-up',
+            component: () => import('@/pages/SignUpPage.vue'),
+            meta: {
+                layout: defineAsyncComponent(() => import('@/layouts/AuthLayout.vue'))
+            }
         }
     ]
 })

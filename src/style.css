@@ -40,3 +40,6 @@ body {
 .data-container {
     @apply rounded-[10px] w-full bg-base-bg p-5
 }
+.title {
+    @apply text-[17px] text-center opacity-40
+}

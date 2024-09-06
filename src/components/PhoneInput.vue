@@ -9,6 +9,7 @@
             </button>
             <input
                 ref="phoneInput"
+                v-maska="selectMask"
                 class="h-[60px] w-full text-[17px] px-5 border border-border-gray rounded-r-[10px]"
                 :value="phoneNumber"
                 @input="inputEvent"
@@ -40,22 +41,28 @@
 </template>
 
 <script setup>
-import { onMounted, ref} from "vue";
+import {computed, onMounted, reactive, ref} from "vue";
 import {vOnClickOutside} from "@vueuse/components";
+import {vMaska} from "maska/vue";
+import {reactify} from "@vueuse/core";
 
 const countries = [
-    { name: 'Uzbekistan', code: '+998', flag: '🇺🇿' },
-    { name: 'Kazakhstan', code: '+7', flag: '🇰🇿' },
-    { name: 'Russia', code: '+7', flag: '🇷🇺' },
-    { name: 'Tajikistan', code: '+992', flag: '🇹🇯' },
-    { name: 'Kyrgyzstan', code: '+996', flag: '🇰🇬' },
-    { name: 'Turkmenistan', code: '+993', flag: '🇹🇲' },
+    { name: 'Uzbekistan', code: '+998', flag: '🇺🇿', mask: '+998 (##) ###-##-##' },
+    { name: 'Kazakhstan', code: '+7', flag: '🇰🇿', mask: '+7 (###) ###-##-##' },
+    { name: 'Russia', code: '+7', flag: '🇷🇺', mask: '+7 (###) ###-##-##' },
+    { name: 'Tajikistan', code: '+992', flag: '🇹🇯', mask: '+992 (##) ###-####' },
+    { name: 'Kyrgyzstan', code: '+996', flag: '🇰🇬', mask: '+996 (###) ###-###' },
+    { name: 'Turkmenistan', code: '+993', flag: '🇹🇲', mask: '+993 (##) ###-####' }
 ];
 
 const selectedCountry = ref(null)
 const phoneInput = ref(null)
 const isOpenSelect = ref(false)
 const phoneNumber = ref('')
+
+const selectMask = computed(() => {
+    return selectedCountry.value ? selectedCountry.value.mask : '+###########'
+})
 
 const closeSelectModal = () => {
     isOpenSelect.value = false
