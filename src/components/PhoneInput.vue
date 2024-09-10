@@ -2,7 +2,7 @@
     <div class="relative">
         <div class="flex">
             <button
-                @click.stop="() => isOpenSelect = !isOpenSelect"
+                @click.stop.prevent="() => isOpenSelect = !isOpenSelect"
                 class="text-xl size-[60px] bg-base-bg rounded-l-[10px] flex-none flex items-center justify-center border border-r-0 border-border-gray"
             >
                 {{selectedCountry?.flag ?? '🌍'}}
@@ -11,7 +11,7 @@
                 ref="phoneInput"
                 v-maska="selectMask"
                 class="h-[60px] w-full text-[17px] px-5 border border-border-gray rounded-r-[10px]"
-                :value="phoneNumber"
+                :value="modelValue"
                 @input="inputEvent"
             >
         </div>
@@ -24,7 +24,7 @@
             >
                 <ul>
                     <li
-                        v-for="(country, index) in countries"
+                        v-for="(country, index) in countryStore.getActiveCountries"
                         :key="index"
                         class="flex items-center h-10 text-[17px] hover:bg-base-bg -mx-4 px-4 rounded-[10px] cursor-pointer"
                         :class="{'bg-base-bg': selectedCountry?.name === country?.name}"
@@ -41,20 +41,19 @@
 </template>
 
 <script setup>
-import {computed, onMounted, reactive, ref} from "vue";
+import {computed, onMounted, reactive, ref, watch} from "vue";
 import {vOnClickOutside} from "@vueuse/components";
 import {vMaska} from "maska/vue";
-import {reactify} from "@vueuse/core";
+import {useCountryStore} from "@/stores/modules/country.js";
 
-const countries = [
-    { name: 'Uzbekistan', code: '+998', flag: '🇺🇿', mask: '+998 (##) ###-##-##' },
-    { name: 'Kazakhstan', code: '+7', flag: '🇰🇿', mask: '+7 (###) ###-##-##' },
-    { name: 'Russia', code: '+7', flag: '🇷🇺', mask: '+7 (###) ###-##-##' },
-    { name: 'Tajikistan', code: '+992', flag: '🇹🇯', mask: '+992 (##) ###-####' },
-    { name: 'Kyrgyzstan', code: '+996', flag: '🇰🇬', mask: '+996 (###) ###-###' },
-    { name: 'Turkmenistan', code: '+993', flag: '🇹🇲', mask: '+993 (##) ###-####' }
-];
-
+const emits = defineEmits(['update:modelValue', 'selectedCountry'])
+const props = defineProps({
+    modelValue: {
+        type: [String, Number],
+        default: ''
+    }
+})
+const countryStore = useCountryStore()
 const selectedCountry = ref(null)
 const phoneInput = ref(null)
 const isOpenSelect = ref(false)
@@ -69,17 +68,27 @@ const closeSelectModal = () => {
 }
 
 const inputEvent = (event) => {
-    selectedCountry.value = countries.find(country => country.code === event.target.value.toString().substring(0, country.code.length));
+    selectedCountry.value = countryStore.getActiveCountries.find(country => country.code === event.target.value.toString().substring(0, country.code.length));
     phoneNumber.value = event.target.value.toString();
+    emits('update:modelValue', event.target.value)
+    emits('selectedCountry', selectedCountry.value)
 }
 
 const selectCountry = (index) => {
-    selectedCountry.value = countries[index];
+    selectedCountry.value = countryStore.getActiveCountries[index];
     phoneNumber.value = selectedCountry.value.code.toString()
     phoneInput.value.focus()
+    emits('update:modelValue', selectedCountry.value.code)
+    emits('selectedCountry', selectedCountry.value)
+    closeSelectModal()
 }
-onMounted(() => {
-    selectCountry(0)
+onMounted(async () => {
+    await countryStore.fetchCountries()
+    selectCountry(1) // ip manziliga qarab davlat default tanlash
+})
+
+watch(() => props.modelValue, () => {
+    phoneNumber.value = props.modelValue
 })
 </script>
 
