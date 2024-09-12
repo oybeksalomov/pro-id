@@ -9,8 +9,8 @@ export const useCountryStore = defineStore('countryStore', () => {
         activeCountries: [],
     }
 
-    const fetchCountries = async () => {
-        await unauthorizedClient.get('/v2/countries')
+    const fetchCountries = () => {
+        return unauthorizedClient.get('/v2/countries')
             .then(res => {
                 state.countries = res.data.filter(country => country["is_active"])
                 selectCountries()

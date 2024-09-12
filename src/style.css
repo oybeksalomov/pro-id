@@ -24,9 +24,16 @@
     --border-gray: #ACACAC;
 }
 
+#app {
+    @apply h-screen
+}
+
 body {
-    @apply bg-base-bg text-black;
+    @apply bg-base-bg text-black text-base min-h-screen h-fit w-full;
     font-family: 'gt-walsheim-pro', sans-serif;
+}
+.authContainer {
+    @apply w-full h-full flex items-center justify-center
 }
 .base-container {
     @apply px-10 max-md:px-4

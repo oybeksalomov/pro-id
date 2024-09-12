@@ -1,4 +1,5 @@
 <template>
+    <HeaderComponent />
     <main class="base-container grid grid-cols-5 gap-5">
 
         <!--Birinchi ustun-->
@@ -85,51 +86,78 @@
         </div>
 
         <!--Uchinchi ustun-->
-        <div class="main-card col-span-1">
-            <div class="flex flex-col items-center pb-10 ">
-                <div class="size-[80px] rounded-full flex items-center justify-center bg-base-color">
-                    <AccauntIcon class="fill-white size-[30px]"/>
+        <div class="rounded-[20px] overflow-y-hidden">
+            <transition name="row">
+                <div v-if="isOpenProfile" class="main-card col-span-1">
+                    <div class="flex flex-col items-center ">
+                        <div class="size-[80px] rounded-full flex items-center justify-center bg-base-color">
+                            <AccauntIcon class="fill-white size-[30px]"/>
+                        </div>
+                        <div class="text-2xl mt-5">Name Surname</div>
+                    </div>
+                    <hr class="my-10">
+                    <BaseButton class="black-bg mb-10 w-full">Добавить аккаунт</BaseButton>
+                    <div>
+                        <ul class="flex flex-col">
+                            <li
+                                v-for="(item, index) in accauntMenuItems"
+                                :key="index"
+                                class="listItem"
+                            >
+                                <router-link to="#" class="flex items-center">
+                                    <component :is="item.icon" class="fill-bg-black size-6"/>
+                                    <div class="text-lg ml-[15px]">{{item.name}}</div>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </div>
+                    <hr class="my-5">
+                    <div>
+                        <ul class="flex flex-col">
+                            <li
+                                v-for="(item, index) in accauntMenuItems"
+                                :key="index"
+                                class="listItem"
+                            >
+                                <router-link to="#" class="flex items-center">
+                                    <component :is="item.icon" class="fill-bg-black size-6"/>
+                                    <div class="text-lg ml-[15px]">{{item.name}}</div>
+                                </router-link>
+                            </li>
+                        </ul>
+                    </div>
+                    <hr class="my-5">
+                    <button @click="logoutAction" class="text-text-red flex items-center w-full hover:bg-red-50 py-[5px] -mx-3 px-3 rounded-lg transition-all active:bg-red-100">
+                        <ExitIcon class="fill-text-red"/>
+                        <span class="text-lg ml-[15px]">Chiqish</span>
+                    </button>
+
+                    <div class="text-[12px] text-border-gray mt-[100px]">
+                        Пользовательское соглашение Политика конфиденциальности
+                    </div>
                 </div>
-                <div class="text-2xl mt-5">Name Surname</div>
-            </div>
-            <hr>
-            <div class="mt-10">
-                <ul class="flex flex-col gap-2.5">
-                    <li
-                        v-for="(item, index) in accauntMenuItems"
-                        :key="index"
-                    >
-                        <router-link to="#" class="flex items-center">
-                            <component :is="item.icon" class="fill-bg-black size-6"/>
-                            <div class="text-lg ml-[15px]">{{item.name}}</div>
-                        </router-link>
-                    </li>
-                </ul>
-            </div>
-            <hr>
-            <div class="mt-10">
-                <ul class="flex flex-col gap-2.5">
-                    <li
-                        v-for="(item, index) in accauntMenuItems"
-                        :key="index"
-                    >
-                        <router-link to="#" class="flex items-center">
-                            <component :is="item.icon" class="fill-bg-black size-6"/>
-                            <div class="text-lg ml-[15px]">{{item.name}}</div>
-                        </router-link>
-                    </li>
-                </ul>
-            </div>
+            </transition>
         </div>
+
     </main>
 </template>
 
 <script setup>
 import AccauntIcon from "@/icons/AccauntIcon.vue";
 import MailIcon from "@/icons/MailIcon.vue";
-import {ref} from "vue";
 import CloudIcon from "@/icons/CloudIcon.vue";
 import SettingIcon from "@/icons/SettingIcon.vue";
+import HeaderComponent from "@/components/HeaderComponent.vue";
+import BaseButton from "@/components/BaseButton.vue";
+import ExitIcon from "@/icons/ExitIcon.vue";
+import {useHeaderStore} from "@/stores/header.js";
+import {toRefs} from "vue";
+import {useUserStore} from "@/stores/modules/user.js";
+import {useRouter} from "vue-router";
+
+const {isOpenProfile} = toRefs(useHeaderStore())
+const {removeToken, clearToken} = useUserStore()
+const router = useRouter()
 
 const menuItems = [
     {name: "Asosiy"},
@@ -148,8 +176,35 @@ const accauntMenuItems = [
     {name: "Akkaunt boshqaruvi", icon: SettingIcon},
 
 ]
+
+const logoutAction = async () => {
+    // await removeToken() // todo shuni to'g'irlash kerak
+    await clearToken()
+    await router.push({name: 'sign-in'});
+}
 </script>
 
 <style scoped>
+.listItem {
+    @apply py-[5px] hover:bg-base-bg -mx-3 px-3 rounded-lg transition-all active:bg-gray-200
+}
+.row-enter-active, .row-leave-active {
+    transition: all 0.3s ease;
+}
 
+.row-enter-from {
+    transform: translateY(-100%);
+}
+
+.row-enter-to {
+    transform: translateY(0);
+}
+
+.row-leave-from {
+    transform: translateY(0);
+}
+
+.row-leave-to {
+    transform: translateY(-100%);
+}
 </style>

@@ -9,6 +9,7 @@
             @keydown="handleKeydown(index, $event)"
             placeholder="-"
             class="inputStyle"
+            :class="codeStatus"
             maxlength="1"
             type="text"
         />
@@ -16,8 +17,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import {onMounted, ref, watch} from 'vue';
 
+const emits = defineEmits(["inputValue"]);
+defineProps({
+    codeStatus: {
+        type: String,
+        default: ''
+    }
+})
 const inputs = ref(Array(6).fill(''));
 
 const moveFocus = (index) => {
@@ -55,6 +63,15 @@ const handleKeydown = (index, event) => {
         }
     }
 };
+
+onMounted(() => {
+    const firstInput = document.getElementById('input0');
+    firstInput.focus()
+})
+watch(() => inputs.value[inputs.value.length - 1], () => {
+    let value = inputs.value.join('')
+    emits('inputValue', value)
+})
 </script>
 
 <style scoped>
@@ -64,10 +81,10 @@ const handleKeydown = (index, event) => {
 .inputStyle:not(:placeholder-shown) {
     @apply border-bg-black;
 }
-.succesStyle {
+.successStyle:not(:placeholder-shown) {
     @apply border-base-color;
 }
-.errorStyle {
+.errorStyle:not(:placeholder-shown)  {
     @apply border-text-red;
 }
 </style>

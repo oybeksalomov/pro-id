@@ -1,5 +1,5 @@
 <template>
-    <div class="size-[60px] flex items-center justify-center rounded-[10px] bg-base-color bg-opacity-60">
+    <div class="size-[60px] flex items-center justify-center rounded-[10px] bg-base-color transition-all">
         <slot></slot>
     </div>
 </template>

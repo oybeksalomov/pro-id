@@ -1,6 +1,6 @@
 <template>
     <HeaderComponent />
-    <router-view />
+    <slot />
 </template>
 
 <script setup>

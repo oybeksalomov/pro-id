@@ -1,5 +1,7 @@
 <template>
-    <slot />
+<div class="authContainer">
+    <router-view />
+</div>
 </template>
 
 <script setup>

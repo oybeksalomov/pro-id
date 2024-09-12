@@ -17,7 +17,7 @@ export default {
         "text-red": "#FF0000",
         "bg-black": "#303030",
         "base-bg": "#F6F5F7",
-        "border-gray": "#ACACAC",
+        "border-gray": "#ACACAC"
       },
 
     },
