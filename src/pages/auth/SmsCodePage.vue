@@ -2,12 +2,15 @@
     <AuthContainer>
         <div class="mt-[30px] w-full">
             <div class="flex flex-col items-center justify-center h-[54px]">
-                <div v-if="!isSend" class="title">
+                <div v-if="!isSend && userStore.getUser.phone_number" class="title">
                     Введите код из смс. <br>
                     Мы отправили его на номер
                     <span v-if="userStore.getUser.phone_number">
                         +{{userStore.getUser.phone_number.slice(0, 3)}} ***** {{userStore.getUser.phone_number.slice(-2)}}
                     </span>
+                </div>
+                <div v-if="!isSend && !userStore.getUser.phone_number" class="title">
+                    Xatolik yuz berdi
                 </div>
                 <div v-if="isMatched && isSend" class="flex items-center justify-center">
                     <SuccessCheckIcon />
@@ -17,6 +20,7 @@
                     <ErrorCheckIcon />
                     <div class="text-[17px] ml-[10px] text-text-red font-gt-walsheim-medium">Код не совпадает</div>
                 </div>
+        
             </div>
 
             <form @submit.prevent class="flex flex-col gap-5 mt-5">
@@ -24,6 +28,20 @@
                     @input-value="inputValue"
                     :code-status="codeStyle"
                 />
+
+                <div key="1" v-if="attempts > 0" class="title">
+                    Qolgan urinishlar <span>{{ attempts }}</span>
+                </div>
+            
+                <RouterLink
+                    v-if="attempts < 0 || !userStore.getUser.phone_number"
+                    key="2"
+                    :to="{name: 'sign-in'}" 
+                    class="w-fit text-base-color hover:underline text-[17px] mx-auto"
+                >
+                    Telefon raqam qayta kiriting
+                </RouterLink>
+        
                 <!--Sign in-->
                 <BaseButton
                     v-if="hasUser"
@@ -48,6 +66,7 @@
                 <BaseButton
                     @click="sendCodeAgain"
                     class="outline-bg w-full"
+                    :disabled="!userStore.getUser.phone_number"
                 >
                     Отправить код еще раз
                 </BaseButton>
@@ -67,6 +86,7 @@ import {useUserStore} from "@/stores/modules/user.js";
 import {onMounted, ref} from "vue";
 import {useRouter} from "vue-router";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
+import { string } from "yup";
 
 const userStore = useUserStore()
 const isMatched = ref(false)
@@ -76,13 +96,14 @@ const isDisable = ref(true)
 const isLoading = ref(false)
 const hasUser = ref(false)
 const router = useRouter()
+const attempts = ref(0)
 
 const inputValue = (code) => {
     const form = {
         code: code,
         phone_number: userStore.getUser.phone_number
     }
-    if (code) {
+    if (String(code).length === 6) {
         userStore.checkCode(form)
             .then(res => {
                 if (res.data.status) {
@@ -96,6 +117,7 @@ const inputValue = (code) => {
                     isMatched.value = false
                     codeStyle.value = 'errorStyle'
                     isDisable.value = true
+                    attempts.value = err.response.data.attempts ?? -1
                 }
             })
             .finally(() => {
@@ -157,5 +179,4 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 </style>

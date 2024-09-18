@@ -1,9 +1,9 @@
 <template>
     <HeaderComponent />
-    <main class="base-container grid grid-cols-5 gap-5">
+    <main class="base-container pb-10 grid grid-cols-5 gap-5">
 
         <!--Birinchi ustun-->
-        <div class="col-span-1 main-card">
+        <div class="col-span-1 max-2xl:col-span-3 max-2xl:order-1 max-sm:col-span-5 max-sm:order-2 main-card">
             <ul>
                 <li
                     v-for="(item, index) in menuItems"
@@ -16,10 +16,10 @@
                     </button>
                 </li>
             </ul>
-        </div>
+        </div> 
 
         <!--Ikkinchi ustun-->
-        <div class="col-span-3 flex flex-col gap-5">
+        <div class="col-span-3 max-2xl:col-span-5 max-2xl:order-3 max-sm:col-span-5 flex flex-col gap-5">
             <div class="main-card">
                 <div class="text-2xl">Ma'lumotlar</div>
                 <div class="grid grid-cols-2 gap-5 mt-5">
@@ -86,14 +86,15 @@
         </div>
 
         <!--Uchinchi ustun-->
-        <div class="rounded-[20px] overflow-y-hidden">
+        <div class="rounded-[20px] overflow-y-hidden col-span-1 max-2xl:col-span-2 max-2xl:col-start-4 max-sm:col-span-5 max-2xl:order-2 max-sm:order-1">
+            <!--Profil-->
             <transition name="row">
-                <div v-if="isOpenProfile" class="main-card col-span-1">
+                <div v-if="isOpenProfile" class="main-card">
                     <div class="flex flex-col items-center ">
                         <div class="size-[80px] rounded-full flex items-center justify-center bg-base-color">
                             <AccauntIcon class="fill-white size-[30px]"/>
                         </div>
-                        <div class="text-2xl mt-5">Name Surname</div>
+                        <div class="text-2xl mt-5">{{userStore.getUser.name}} {{userStore.getUser.surname}}</div>
                     </div>
                     <hr class="my-10">
                     <BaseButton class="black-bg mb-10 w-full">Добавить аккаунт</BaseButton>
@@ -137,8 +138,23 @@
                     </div>
                 </div>
             </transition>
-        </div>
 
+            <!--Servislar-->
+            <transition name="row">
+                <div v-if="isOpenServices" class="main-card">
+                    <div class="text-2xl mt-5 flex justify-center">
+                        <b class="mr-2">Pro </b> Сервисы
+                    </div>
+                    <hr class="my-10">
+
+                    <div>
+                        <button >
+                            <img src="">
+                        </button>
+                    </div>
+                </div>
+            </transition>
+        </div>
     </main>
 </template>
 
@@ -151,12 +167,12 @@ import HeaderComponent from "@/components/HeaderComponent.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import ExitIcon from "@/icons/ExitIcon.vue";
 import {useHeaderStore} from "@/stores/header.js";
-import {toRefs} from "vue";
-import {useUserStore} from "@/stores/modules/user.js";
+import {nextTick, onMounted, toRefs} from "vue";
+import { useUserStore } from "@/stores/modules/user";
 import {useRouter} from "vue-router";
 
-const {isOpenProfile} = toRefs(useHeaderStore())
-const {removeToken, clearToken} = useUserStore()
+const {isOpenProfile, isOpenServices} = toRefs(useHeaderStore())
+const userStore = useUserStore()
 const router = useRouter()
 
 const menuItems = [
@@ -177,11 +193,17 @@ const accauntMenuItems = [
 
 ]
 
+
+
 const logoutAction = async () => {
-    // await removeToken() // todo shuni to'g'irlash kerak
-    await clearToken()
+    // await userStore.removeToken()
+    await userStore.clearToken()
     await router.push({name: 'sign-in'});
 }
+
+onMounted(() => {
+    userStore.fetchUser()
+})
 </script>
 
 <style scoped>

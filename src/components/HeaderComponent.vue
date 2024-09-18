@@ -4,8 +4,8 @@
             <router-link to="/">
                 <BaseLogo class="w-[155px] h-[50px] mr-2.5"/>
             </router-link>
-            <button class="ml-auto">
-                <HeaderIconCard>
+            <button @click="headerStore.toggleServices" class="ml-auto">
+                <HeaderIconCard :class="{'bg-opacity-60': !headerStore.isOpenServices}">
                     <MenuIcon class="fill-white size-7"/>
                 </HeaderIconCard>
             </button>

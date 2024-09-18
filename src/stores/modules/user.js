@@ -12,6 +12,14 @@ export const useUserStore = defineStore('userStore', () => {
         },
     })
 
+    const fetchUser = () => {
+        return authorizedClient.get('/v2/user')
+            .then(res => {
+                state.user = res.data
+                return res
+            })
+    }
+
     const setUserData = (data) => {
         state.user = data;
     }
@@ -49,13 +57,12 @@ export const useUserStore = defineStore('userStore', () => {
     }
 
     const checkCode = (data) => {
-        return unauthorizedClient.post('/checkCode', data)
+        return unauthorizedClient.post('/v2/checkCode', data)
     }
 
     const clearToken = () => {
         localStorage.removeItem('accessToken')
-
-        state.accessToken = localStorage.getItem('accessToken')
+        state.accessToken = null
     }
 
     const removeToken = () => {
@@ -71,6 +78,7 @@ export const useUserStore = defineStore('userStore', () => {
         setUserData,
         register,
         removeToken,
+        fetchUser,
         getAccessToken: computed(() => state.accessToken),
         getUser: computed(() => state.user),
     }
