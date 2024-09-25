@@ -37,12 +37,13 @@ import {object, string} from "yup"
 import {ref, watch} from "vue";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
 import {useUserStore} from "@/stores/modules/user.js";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 
 const userStore = useUserStore()
 const isDisabled = ref(true)
 const isLoading = ref(false)
 const router = useRouter()
+const route = useRoute()
 
 const validationSchema = object({
     name: string().required("Name is required"),
@@ -64,7 +65,12 @@ const check = handleSubmit(async (form) => {
             console.log(res.data.code) // todo vaqtincha
         })
     await userStore.setUserData(form)
-    await router.push({name: 'send-code'})
+    await router.push({
+        name: 'send-code',
+        query: { 
+            redirect: route.query.redirect
+        }
+    })
 })
 watch(() => meta.value.valid, (newValue) => {
     isDisabled.value = !newValue

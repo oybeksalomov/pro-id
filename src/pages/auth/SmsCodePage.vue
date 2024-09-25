@@ -84,7 +84,7 @@ import SuccessCheckIcon from "@/icons/SuccessCheckIcon.vue";
 import ErrorCheckIcon from "@/icons/ErrorCheckIcon.vue";
 import {useUserStore} from "@/stores/modules/user.js";
 import {onMounted, ref} from "vue";
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
 import { string } from "yup";
 
@@ -96,14 +96,17 @@ const isDisable = ref(true)
 const isLoading = ref(false)
 const hasUser = ref(false)
 const router = useRouter()
+const route = useRoute()
 const attempts = ref(0)
 
 const inputValue = (code) => {
     const form = {
         code: code,
-        phone_number: userStore.getUser.phone_number
+        phone_number: userStore.getUser.phone_number,
+        hashed_code: userStore.getHashedCode
     }
     if (String(code).length === 6) {
+        console.log(form)
         userStore.checkCode(form)
             .then(res => {
                 if (res.data.status) {
@@ -126,34 +129,39 @@ const inputValue = (code) => {
     }
 }
 
-const signIn = async () => {
+const signIn = () => {
     if (isMatched.value) {
         const form = {
             phone_number: userStore.getUser.phone_number,
         }
         isLoading.value = true
-        await userStore.fetchToken(form)
+        userStore.fetchToken(form)
             .then(() => {
-                router.push({name: 'home'})
+                const redirect = route.query.redirect || '/';
+                console.log(redirect)
+                router.push(redirect);
             })
-            .catch(err => {
-                return err
+            .catch(err => err)
+            .finally(() => {
+                isLoading.value = false
             })
-        isLoading.value = false
     }
 }
 
-const signUp = async () => {
+const signUp = () => {
     if (isMatched.value) {
 
         const form = userStore.getUser
         isLoading.value = true
-        await userStore.register(form)
+        userStore.register(form)
             .then(() => {
-                router.push({name: 'home'})
+                const redirect = route.query.redirect || '/';
+                router.push(redirect);
             })
             .catch(err => err)
-        isLoading.value = false
+            .finally(() => {
+                isLoading.value = false
+            })
     }
 }
 

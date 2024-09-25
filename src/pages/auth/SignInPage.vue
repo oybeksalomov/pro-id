@@ -46,7 +46,7 @@ import {useUserStore} from "@/stores/modules/user.js";
 import {useField, useForm} from "vee-validate";
 import {object, string} from "yup";
 import LoaderSpinner from "@/components/LoaderSpinner.vue";
-import {useRouter} from "vue-router";
+import {useRouter, useRoute} from "vue-router";
 
 const userStore = useUserStore()
 const isDisabled = ref(true)
@@ -56,6 +56,7 @@ const isLoading = ref(false)
 const isLoadingSignIn = ref(false)
 const userFullName = ref('')
 const router = useRouter()
+const route = useRoute()
 
 const validationSchema = object({
     phone_number:  string()
@@ -80,8 +81,13 @@ const check = handleSubmit(async (form) => {
     isLoadingSignIn.value = true
     await userStore.sendOTP(form)
         .then((res) => {
-            console.log(res.data.code) //todo vaqtincha
-            router.push({name: 'send-code'})
+            console.log(res.data) //todo vaqtincha
+            router.push({
+                name: 'send-code',
+                query: { 
+                    redirect: route.query.redirect
+                }
+            })
         })
 
     isLoadingSignIn.value = false
@@ -96,7 +102,12 @@ const selectCountry = (value) => {
 const signUp = handleSubmit(async (form) => {
     form.phone_number = form.phone_number.replace(/[\s()+-]/g, '')
     await userStore.setUserData(form)
-    await router.push({name: 'sign-up'})
+    await router.push({
+        name: 'sign-up',
+        query: { 
+            redirect: route.query.redirect
+        }
+    })
 })
 
 watch(() => phone_number.value, async () => {

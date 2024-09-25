@@ -84,7 +84,7 @@ const selectCountry = (index) => {
 }
 onMounted(async () => {
     await countryStore.fetchCountries()
-    selectCountry(1) // ip manziliga qarab davlat default tanlash
+    selectCountry(0) // ip manziliga qarab davlat default tanlash
 })
 
 watch(() => props.modelValue, () => {

@@ -8,8 +8,10 @@ export const useUserStore = defineStore('userStore', () => {
         user: {
             name: '',
             surname: '',
-            phone_number: ''
+            phone_number: '',
+            avatar: ''
         },
+        hashed_code: ''
     })
 
     const fetchUser = () => {
@@ -46,6 +48,10 @@ export const useUserStore = defineStore('userStore', () => {
 
     const sendOTP = (data) => {
         return unauthorizedClient.post('/sendOTP', data)
+            .then(res => {
+                state.hashed_code = res.data.hashed_code
+                return res
+            })
     }
 
     const hasUser = (data) => {
@@ -81,5 +87,6 @@ export const useUserStore = defineStore('userStore', () => {
         fetchUser,
         getAccessToken: computed(() => state.accessToken),
         getUser: computed(() => state.user),
+        getHashedCode: computed(() => state.hashed_code)
     }
 })

@@ -15,6 +15,15 @@ const router = createRouter({
             }
         },
         {
+            path: '/oauth',
+            name: 'oauth',
+            component: () => import('@/pages/OauthPage.vue'),
+            meta: {
+                requiresAuth: true,
+                layout: 'MainLayout'
+            }
+        },
+        {
             path: '/auth',
             name: 'auth',
             component: () => import('@/pages/auth/AuthPage.vue'),
@@ -68,7 +77,10 @@ router.beforeEach((to, from, next) => {
     const isAuthenticated = !!userStore.getAccessToken
 
     if (to.meta.requiresAuth && !isAuthenticated) {
-        next({ name: 'sign-in' });
+        next({ 
+            name: 'sign-in',
+            query: { redirect: to.fullPath }
+        });
     } else if (!to.meta.requiresAuth && isAuthenticated && to.name !== 'home') {
         next({ name: 'home' });
     } else {

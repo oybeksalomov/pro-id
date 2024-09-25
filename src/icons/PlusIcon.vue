@@ -1,0 +1,8 @@
+<template>
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M1 9H17M9 1V17" stroke="#FEFEFE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</template>
+
+<script setup>
+</script>
